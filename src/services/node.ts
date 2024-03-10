@@ -240,7 +240,7 @@ const generateOnlineProof = async (id: string): Promise<OnlineProof> => {
 };
 
 const getClientInfo = (): string => {
-  return [clientVersion, contract.chainId.toString(), cfg.eth.mirrorSystem].join(
+  return [clientVersion, contract.chainId.toString(), cfg.arb.mirrorSystem].join(
     '|'
   );
 };

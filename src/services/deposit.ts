@@ -159,7 +159,7 @@ const sendSignatureImpl = async (signatures: DepositSignature[]) => {
     packedV
   );
 
-  if (recipient === ethers.constants.ZeroAddress || amountInSatoshi === 0) {
+  if (recipient === ethers.constants.AddressZero || amountInSatoshi === 0) {
     throw new Error(
       `Invalid values returned from MirrorSystem: ${recipient}, ${amountInSatoshi}`
     )

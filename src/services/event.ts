@@ -36,7 +36,7 @@ const handleEvents = async (events: contract.AnyEventType[]) => {
 
 const run = async () => {
   const mirrorSystem = contract.mirrorSystem;
-  let fromBlock = cfg.eth.mirrorSystemStartBlock;
+  let fromBlock = cfg.arb.mirrorSystemStartBlock;
   let curBlock = 0;
 
   contract.nodeReward.on(
