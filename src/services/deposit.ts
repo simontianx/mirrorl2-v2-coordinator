@@ -147,7 +147,7 @@ const sendSignatureImpl = async (signatures: DepositSignature[]) => {
   const sig = signatures[0];
   const nodes = signatures.map(s => s.nodeId);
 
-  const [recipient, amountInSatoshi] = await contract.mirrorSystem.verifyMint(
+  await contract.mirrorSystem.verifyMint(
     {
       receiptId: sig.receiptId,
       txId: '0x' + sig.txId,
@@ -159,13 +159,8 @@ const sendSignatureImpl = async (signatures: DepositSignature[]) => {
     packedV
   );
 
-  if (recipient === ethers.constants.AddressZero || amountInSatoshi === 0) {
-    throw new Error(
-      `Invalid values returned from MirrorSystem: ${recipient}, ${amountInSatoshi}`
-    )
-  }
-
-  await contract.mirrorController.mintMBTC(recipient, amountInSatoshi);
+  const receipt = await contract.mirrorSystem.getReceipt(sig.receiptId);
+  await contract.mirrorController.mintMBTC(receipt.recipient, receipt.amountInSatoshi);
 };
 
 export const sendSignature = async (receiptId: string) => {
