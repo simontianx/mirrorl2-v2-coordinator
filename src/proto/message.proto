@@ -1,0 +1,68 @@
+syntax = "proto3";
+package message;
+
+option go_package = "golang/message";
+
+message Request {
+  bytes data = 1;
+  bytes signature = 2;
+}
+
+message Operation {
+  string nodeId = 1;
+
+  oneof operation {
+    Heartbeat heartbeat = 11;
+    DepositSignature depositSignature = 12;
+    WithdrawRequest withdrawRequest = 13;
+    WithdrawSignature withdrawSignature = 14;
+    RefundRequest refundRequest = 15;
+    RefundSignature refundSignature = 16;
+  }
+}
+
+message Heartbeat {
+  string clientInfo = 1;
+  bytes btcPubKey = 2;
+  string email = 3;
+  optional uint64 groupNum = 4;
+  optional uint64 syncMinutes = 5;
+}
+
+message OnlineProof {
+  uint64 timestamp = 1;
+  string signature = 2;
+}
+
+message DepositSignature {
+  string receiptId = 1;
+  string txId = 2;
+  uint64 blockHeight = 3;
+  bytes signature = 4;
+}
+
+message WithdrawRequest {
+  string receiptId = 1;
+}
+
+message Withdraw {
+  string psbt = 1;
+}
+
+message WithdrawSignature {
+  string receiptId = 1;
+  string psbt = 2;
+}
+
+message RefundRequest {
+  string txId = 1;
+}
+
+message Refund {
+  string psbt = 1;
+}
+
+message RefundSignature {
+  string txId = 1;
+  string psbt = 2;
+}

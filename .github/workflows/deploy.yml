@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Move node modules to dist folder
+        run: mv node_modules/ dist/
+
+      - name: Deploy to staging server
+        if: github.ref == 'refs/heads/dev'
+        uses: easingthemes/ssh-deploy@v2.1.6
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_DEPLOY_KEY }}
+          ARGS: '-avzr --delete'
+          SOURCE: 'dist/'
+          REMOTE_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          REMOTE_USER: ${{ secrets.STAGING_SSH_USERNAME }}
+          REMOTE_PORT: ${{ secrets.STAGING_SSH_PORT }}
+          TARGET: ${{ secrets.STAGING_DEPLOY_TARGET }}
+          EXCLUDE: '/config.yaml, /*.sh, /log.txt, /data/'
+
+      - name: Deploy to production server
+        if: github.ref == 'refs/heads/master'
+        uses: easingthemes/ssh-deploy@v2.1.6
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+          ARGS: '-avzr --delete'
+          SOURCE: 'dist/'
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          TARGET: ${{ secrets.DEPLOY_TARGET }}
+          EXCLUDE: '/config.yaml, /*.sh, /log.txt, /data/'

@@ -1,0 +1,26 @@
+version: "3.1"
+services:
+  mysql:
+    env_file: ./.env
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      "MYSQL_DATABASE": "${DB_DATABASE}"
+      "MYSQL_ROOT_PASSWORD": "${DB_ROOT_PASSWORD}"
+      "MYSQL_USER": "${DB_USER}"
+      "MYSQL_PASSWORD": "${DB_PASSWORD}"
+
+  redis:
+    image: redis
+    container_name: redis
+    command: redis-server --appendonly yes
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
